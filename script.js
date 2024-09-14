@@ -149,4 +149,5 @@ typingForm.addEventListener("submit", (e) => {
   handleOutgoingChat();
 });
 
-loadDataFrom
+loadDataFromLocalstorage();
+
