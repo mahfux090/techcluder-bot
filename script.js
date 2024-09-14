@@ -4,11 +4,9 @@ const suggestions = document.querySelectorAll(".suggestion");
 const toggleThemeButton = document.querySelector("#theme-toggle-button");
 const deleteChatButton = document.querySelector("#delete-chat-button");
 
-
 let userMessage = null;
 let isResponseGenerating = false;
 
-const API_KEY = "AIzaSyA9s9FesBrgTo7xE2FZFzs-SC47k3t7lPs";
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
 const loadDataFromLocalstorage = () => {
@@ -36,7 +34,6 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
   let currentWordIndex = 0;
 
   const typingInterval = setInterval(() => {
- 
     textElement.innerText += (currentWordIndex === 0 ? '' : ' ') + words[currentWordIndex++];
     incomingMessageDiv.querySelector(".icon").classList.add("hide");
 
@@ -44,14 +41,14 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
       clearInterval(typingInterval);
       isResponseGenerating = false;
       incomingMessageDiv.querySelector(".icon").classList.remove("hide");
-      localStorage.setItem("saved-chats", chatContainer.innerHTML); 
+      localStorage.setItem("saved-chats", chatContainer.innerHTML);
     }
-    chatContainer.scrollTo(0, chatContainer.scrollHeight); 
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
   }, 75);
 }
 
 const generateAPIResponse = async (incomingMessageDiv) => {
-  const textElement = incomingMessageDiv.querySelector(".text"); 
+  const textElement = incomingMessageDiv.querySelector(".text");
 
   try {
     const response = await fetch(API_URL, {
@@ -69,10 +66,10 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     if (!response.ok) throw new Error(data.error.message);
 
     const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
-    showTypingEffect(apiResponse, textElement, incomingMessageDiv); 
-  } catch (error) { 
+    showTypingEffect(apiResponse, textElement, incomingMessageDiv);
+  } catch (error) {
     isResponseGenerating = false;
-    textElement.innerText = error.message;
+    textElement.innerText = "An error occurred. Please try again.";
     textElement.parentElement.closest(".message").classList.add("error");
   } finally {
     incomingMessageDiv.classList.remove("loading");
@@ -94,7 +91,7 @@ const showLoadingAnimation = () => {
   const incomingMessageDiv = createMessageElement(html, "incoming", "loading");
   chatContainer.appendChild(incomingMessageDiv);
 
-  chatContainer.scrollTo(0, chatContainer.scrollHeight); 
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
   generateAPIResponse(incomingMessageDiv);
 }
 
@@ -103,13 +100,12 @@ const copyMessage = (copyButton) => {
 
   navigator.clipboard.writeText(messageText);
   copyButton.innerText = "done";
-  setTimeout(() => copyButton.innerText = "content_copy", 1000); 
+  setTimeout(() => copyButton.innerText = "content_copy", 1000);
 }
 
-// Handle sending outgoing chat messages
 const handleOutgoingChat = () => {
   userMessage = typingForm.querySelector(".typing-input").value.trim() || userMessage;
-  if(!userMessage || isResponseGenerating) return;
+  if (!userMessage || isResponseGenerating) return;
 
   isResponseGenerating = true;
 
@@ -122,10 +118,11 @@ const handleOutgoingChat = () => {
   outgoingMessageDiv.querySelector(".text").innerText = userMessage;
   chatContainer.appendChild(outgoingMessageDiv);
   
-  typingForm.reset(); 
+  typingForm.reset();
   document.body.classList.add("hide-header");
   chatContainer.scrollTo(0, chatContainer.scrollHeight);
-  setTimeout(showLoadingAnimation, 500); 
+  setTimeout(showLoadingAnimation, 500);
+}
 
 toggleThemeButton.addEventListener("click", () => {
   const isLightMode = document.body.classList.toggle("light_mode");
@@ -139,15 +136,17 @@ deleteChatButton.addEventListener("click", () => {
     loadDataFromLocalstorage();
   }
 });
+
 suggestions.forEach(suggestion => {
   suggestion.addEventListener("click", () => {
     userMessage = suggestion.querySelector(".text").innerText;
     handleOutgoingChat();
   });
 });
+
 typingForm.addEventListener("submit", (e) => {
-  e.preventDefault(); 
+  e.preventDefault();
   handleOutgoingChat();
 });
 
-loadDataFromLocalstorage();
+loadDataFrom
